@@ -1,10 +1,10 @@
 import cv2
 from ..walker import DirectoryWalker
-from ..saver import DefaultSaver
+from ..saver import Saver
 
 
 class ImageLabeler:
-    def __init__(self, saver: DefaultSaver, directory_walker: DirectoryWalker, 
+    def __init__(self, saver: Saver, directory_walker: DirectoryWalker, 
                  width: int=512, height: int=512):
         self.width = width
         self.height = height
