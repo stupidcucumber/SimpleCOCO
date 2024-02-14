@@ -1,0 +1,36 @@
+{
+    "images": [
+        {
+            "id": 0,
+            "width": 512,
+            "height": 512,
+            "file_name": "./output/example_2.jpg",
+            "license": null,
+            "date_captured": null
+        },
+        {
+            "id": 1,
+            "width": 512,
+            "height": 512,
+            "file_name": "./output/example_0.png",
+            "license": null,
+            "date_captured": null
+        },
+        {
+            "id": 2,
+            "width": 512,
+            "height": 512,
+            "file_name": "./output/example_1.png",
+            "license": null,
+            "date_captured": null
+        }
+    ],
+    "annotations": [],
+    "categories": [
+        {
+            "id": 1,
+            "name": "tomato",
+            "supercategory": "vegetable"
+        }
+    ]
+}

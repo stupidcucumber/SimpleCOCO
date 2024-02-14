@@ -1,14 +1,16 @@
 import cv2
 from ..walker import DirectoryWalker
+from ..saver import DefaultSaver
 
 
 class ImageLabeler:
-    def __init__(self, output: str, directory_walker: DirectoryWalker, 
+    def __init__(self, saver: DefaultSaver, directory_walker: DirectoryWalker, 
                  width: int=512, height: int=512):
         self.width = width
         self.height = height
         self.processed = dict()
         self.walker = directory_walker
+        self.saver = saver
 
     def _preprocess(self, raw_image: cv2.Mat, bboxes: list, meta: bool=True) -> cv2.Mat:
         image = cv2.resize(raw_image, dsize=(self.width, self.height))
@@ -45,8 +47,8 @@ class ImageLabeler:
             pressed_key = cv2.waitKey(0)
             if pressed_key == ord('q'):
                 label = False
-            elif pressed_key == ord('save'):
-                print('Here we are saving!')
+            elif pressed_key == ord('s'):
+                self.saver.save(result=self.processed)
             elif pressed_key == ord('n'):
                 if current_index < len(self.walker) - 1:
                     current_index += 1
