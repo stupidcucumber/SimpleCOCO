@@ -1,4 +1,5 @@
 import argparse
+from src.labeler import ImageLabeler
 from src.walker import DefaultDirectoryWalker
 
 
@@ -14,6 +15,8 @@ def parse_arguments():
 if __name__ == '__main__':
     args = parse_arguments()
     print('Settings are: ', args)
+    walker = DefaultDirectoryWalker(root=args.root, cache=False)
+    print('Paths are: ', walker.paths)
 
-
-    print('Paths are: ', DefaultDirectoryWalker(root=args.root, cache=False).paths)
+    labeler = ImageLabeler(directory_walker=walker, output=args.output)
+    labeler.start()

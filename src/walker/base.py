@@ -14,7 +14,7 @@ class DirectoryWalker:
     def _extract_paths(self) -> list[str]:
         raise NotImplementedError('This function needs to be implemented in the derived class!')
 
-    def _load_image(self, path) -> np.ndarray:
+    def _load_image(self, path: str) -> np.ndarray:
         raise NotImplementedError('This function needs to be implemented in the derived class!')
 
     def _load_images(self) -> list[np.ndarray]:
@@ -24,7 +24,10 @@ class DirectoryWalker:
             result.append(image)
         return result
 
-    def __getitem__(self, index):
+    def __getitem__(self, index: int):
         if self.cache:
-            return self.elements[index]
-        return self._load_image(path=self.paths[index])
+            return self.paths[index], self.elements[index]
+        return self.paths[index], self._load_image(path=self.paths[index])
+
+    def __len__(self) -> int:
+        return len(self.paths)

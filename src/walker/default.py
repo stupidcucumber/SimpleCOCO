@@ -5,7 +5,7 @@ from .base import DirectoryWalker
 
 
 class DefaultDirectoryWalker(DirectoryWalker):
-    def _load_image(self, path) -> np.ndarray:
+    def _load_image(self, path: str) -> np.ndarray:
         image = cv2.imread(path)
         return np.asarray(image)
     
