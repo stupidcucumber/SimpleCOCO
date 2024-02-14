@@ -1,4 +1,5 @@
 import argparse
+from src.walker import DefaultDirectoryWalker
 
 
 def parse_arguments():
@@ -14,3 +15,5 @@ if __name__ == '__main__':
     args = parse_arguments()
     print('Settings are: ', args)
 
+
+    print('Paths are: ', DefaultDirectoryWalker(root=args.root, cache=False).paths)
