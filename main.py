@@ -1,7 +1,7 @@
 import argparse
 from src.labeler import ImageLabeler
 from src.walker import DefaultDirectoryWalker
-from src.saver import DefaultSaver
+from src.saver import DefaultSaver, TFIconSaver
 
 
 def parse_arguments():
@@ -17,7 +17,7 @@ if __name__ == '__main__':
     args = parse_arguments()
     print('Settings are: ', args)
     walker = DefaultDirectoryWalker(root=args.root, cache=False)
-    saver = DefaultSaver(output=args.output)
+    saver = TFIconSaver(output=args.output)
     print('Paths are: ', walker.paths)
     labeler = ImageLabeler(saver=saver, directory_walker=walker)
     labeler.start()
