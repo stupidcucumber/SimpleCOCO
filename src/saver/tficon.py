@@ -11,11 +11,12 @@ class TFIconSaver(Saver):
             entry_folder = os.path.join(self.output, str(index))
             os.mkdir(entry_folder)
             output_image_path = os.path.join(entry_folder, image_path.split('/')[-1])
+            bg_image_path = os.path.join(entry_folder, 'bg01.png')
             image = self._process_image(image_path=image_path)
-            images.append(self._build_image_dict(id=index, image=image, filename=output_image_path))
+            images.append(self._build_image_dict(id=index, image=image, filename=bg_image_path))
 
             cv2.imwrite(output_image_path, image)
-            cv2.imwrite(os.path.join(entry_folder, 'bg01.png'), image)
+            cv2.imwrite(bg_image_path, image)
 
             for bbox_index, bbox in enumerate(bboxes):
                 x, y, w, h = bbox
