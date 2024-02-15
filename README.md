@@ -8,6 +8,7 @@ python -m pip install -r requirements.txt
 ```
 
 # Interface
+## CLI
 ```
 usage: main.py [-h] [--root ROOT] [--output OUTPUT] [--format FORMAT]
 
@@ -24,3 +25,8 @@ python main.py --root example/inputs --output output
 ```
 
 You should get the same output as in the example/output folder.
+
+## Keyboard
+- For saving current state of the labelling press 's'. 
+- Moving to the next image 'n'.
+- Back to the previous image 'p'.
