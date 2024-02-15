@@ -1,3 +1,4 @@
+![Logo](./misc/logo.png)
 # How to install?
 Required version of Python: 3.10+ 
 
