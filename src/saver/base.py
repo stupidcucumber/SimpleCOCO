@@ -3,13 +3,14 @@ import cv2
 
 
 class Saver:
-    def __init__(self, output: str):
+    def __init__(self, output: str, train_test_split: float | None=None):
 
         if os.path.exists(output):
             raise ValueError('Folder with the name %s already exists!' % output)
         
         os.mkdir(output)
         self.output = output
+        self.train_test_split = train_test_split
 
     def _process_image(self, image_path: str) -> cv2.Mat:
         image = cv2.imread(image_path)
@@ -29,7 +30,7 @@ class Saver:
         return {
                     'id': annotation_id,
                     'image_id': image_id,
-                    'category_id': 1,
+                    'category_id': 0,
                     'segmentation': bbox,
                     'area': bbox[2] * bbox[3],
                     'bbox': bbox,
@@ -44,7 +45,7 @@ class Saver:
         annotations = []
         categories = [
             {
-                'id': 1,
+                'id': 0,
                 'name': 'tomato',
                 'supercategory': 'vegetable'
             }
