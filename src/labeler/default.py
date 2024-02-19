@@ -43,7 +43,6 @@ class ImageLabeler:
             image_path, raw_image = self.walker[current_index]
             if self.processed.get(image_path, None) is None:
                 self.processed[image_path] = []
-            print(image_path)
             image = self._preprocess(raw_image=raw_image, bboxes=self.processed[image_path])
             cv2.imshow(window_name, image)
             pressed_key = cv2.waitKey(0)
