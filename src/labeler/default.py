@@ -1,4 +1,5 @@
 import cv2
+import pathlib
 from ..walker import DirectoryWalker
 from ..saver import Saver
 
