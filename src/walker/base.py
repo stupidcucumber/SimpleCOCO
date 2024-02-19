@@ -1,8 +1,9 @@
 import numpy as np
+import pathlib
 
 
 class DirectoryWalker:
-    def __init__(self, root: str, cache: bool=True):
+    def __init__(self, root: pathlib.Path, cache: bool=True):
         self.root = root
         self.cache = cache
         self.elements = None
@@ -11,10 +12,10 @@ class DirectoryWalker:
         if self.cache:
             self.elements = self._load_images()
     
-    def _extract_paths(self) -> list[str]:
+    def _extract_paths(self) -> list[pathlib.Path]:
         raise NotImplementedError('This function needs to be implemented in the derived class!')
 
-    def _load_image(self, path: str) -> np.ndarray:
+    def _load_image(self, path: pathlib.Path) -> np.ndarray:
         raise NotImplementedError('This function needs to be implemented in the derived class!')
 
     def _load_images(self) -> list[np.ndarray]:

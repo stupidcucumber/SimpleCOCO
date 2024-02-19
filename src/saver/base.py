@@ -1,22 +1,23 @@
-import json, os
+import json
+import pathlib
 import cv2
 
 
 class Saver:
-    def __init__(self, output: str, train_test_split: float | None=None):
+    def __init__(self, output: pathlib.Path, train_test_split: float | None=None):
 
-        if os.path.exists(output):
-            raise ValueError('Folder with the name %s already exists!' % output)
+        if output.exists():
+            raise ValueError('Folder with the name %s already exists!' % str(output))
         
-        os.mkdir(output)
+        output.mkdir()
         self.output = output
         self.train_test_split = train_test_split
 
-    def _process_image(self, image_path: str) -> cv2.Mat:
-        image = cv2.imread(image_path)
+    def _process_image(self, image_path: pathlib.Path) -> cv2.Mat:
+        image = cv2.imread(str(image_path))
         return cv2.resize(image, dsize=(512, 512))
     
-    def _build_image_dict(self, id, image: cv2.Mat, filename):
+    def _build_image_dict(self, id, image: cv2.Mat, filename: str):
         return  {
                     'id': id,
                     'width': image.shape[1],
@@ -26,7 +27,7 @@ class Saver:
                     'date_captured': None 
         }
     
-    def _build_annotation_dict(self, image_id, annotation_id, bbox):
+    def _build_annotation_dict(self, image_id: int, annotation_id: int, bbox: list):
         return {
                     'id': annotation_id,
                     'image_id': image_id,
@@ -37,7 +38,7 @@ class Saver:
                     'iscrowd': 0
         }
     
-    def build_saving_lists(self, labeled: dict, images: list, annotations: list):
+    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list):
         raise NotImplementedError('This method must be implemented in the derived class!')
 
     def save(self, result: dict) -> str:
@@ -60,7 +61,7 @@ class Saver:
         }
 
         final_json = json.dumps(final, indent=4)
-        with open(os.path.join(self.output, 'dataset.json'), 'w') as f:
+        with open(self.output.joinpath('dataset.json'), 'w') as f:
             f.write(final_json)
 
         print('Saved to the path: ', self.output)

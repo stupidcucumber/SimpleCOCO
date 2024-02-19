@@ -1,6 +1,6 @@
 from .base import Saver
 import pathlib
-import os, cv2
+import cv2
 
 
 class GOALSaver(Saver):

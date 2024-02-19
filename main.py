@@ -1,4 +1,4 @@
-import argparse
+import argparse, pathlib
 from src.labeler import ImageLabeler
 from src.walker import DefaultDirectoryWalker
 from src.saver import DefaultSaver, TFIconSaver, GOALSaver
@@ -6,9 +6,9 @@ from src.saver import DefaultSaver, TFIconSaver, GOALSaver
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root', type=str, default='./inputs',
+    parser.add_argument('--root', type=pathlib.Path, default='./inputs',
                         help='Path to the folder with input images.')
-    parser.add_argument('--output', type=str, default='./output',
+    parser.add_argument('--output', type=pathlib.Path, default='./output',
                         help='Path to the folder where dataset will be stored.')
     parser.add_argument('--format', type=str, default='standard',
                         help='Choose between \'standard\' and \'tficon\' format of COCO dataset.')
