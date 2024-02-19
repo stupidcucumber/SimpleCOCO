@@ -1,19 +1,22 @@
 from .base import Saver
+import pathlib
 import os, cv2
 
 
 class GOALSaver(Saver):
-    def _build_folder_tree(self, root: str) -> list:
-        train_folder = os.path.join(root, 'train')
-        train_images_folder = os.path.join(train_folder, 'images')
-        train_labels_folder = os.path.join(train_folder, 'labels')
-        valid_folder = os.path.join(root, 'val')
-        valid_images_folder = os.path.join(valid_folder, 'images')
-        valid_labels_folder = os.path.join(valid_folder, 'labels')
+    def _build_folder_tree(self, root: pathlib.Path) -> list[pathlib.Path]:
+        train_folder = root.joinpath('train')
+        images_path = pathlib.Path('images')
+        labels_path = pathlib.Path('labels')
+        train_images_folder = train_folder.joinpath(images_path)
+        train_labels_folder = train_folder.joinpath(labels_path)
+        valid_folder = root.joinpath('val')
+        valid_images_folder = valid_folder.joinpath(images_path)
+        valid_labels_folder = valid_folder.joinpath(labels_path)
         _l = [train_images_folder, train_labels_folder, 
               valid_images_folder, valid_labels_folder]
         for folder in _l:
-            os.makedirs(folder)
+            folder.mkdir(parents=True)
         return _l
     
     def _convert_bbox(self, bbox: list, img_size: int) -> list:
@@ -23,7 +26,7 @@ class GOALSaver(Saver):
 
         return [value / img_size for value in [new_x, new_y, w, h]]
 
-    def build_saving_lists(self, labeled: dict, images: list, annotations: list):
+    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list):
         train_images_folder, train_labels_folder, \
             valid_images_folder, valid_labels_folder = self._build_folder_tree(root=self.output)
 
@@ -39,8 +42,8 @@ class GOALSaver(Saver):
                 images_folder = valid_images_folder
                 labels_folder = valid_labels_folder
 
-            output_path = os.path.join(images_folder, image_path.split('/')[-1])
-            cv2.imwrite(output_path, image)
+            output_path = images_folder.joinpath(image_path.name)
+            cv2.imwrite(str(output_path), image)
 
             lines = []
             for bbox in bboxes:
@@ -50,8 +53,8 @@ class GOALSaver(Saver):
                 annotations.append(self._build_annotation_dict(image_id=id, annotation_id=annotation_id, bbox=bbox))
                 annotation_id += 1
 
-            label_name = os.path.join(labels_folder, image_path.split('/')[-1].split('.')[0])
-            with open(label_name + '.txt', 'w') as label_file:
+            label_name = labels_folder.joinpath(image_path.name.split('.')[0])
+            with open(str(label_name) + '.txt', 'w') as label_file:
                 label_file.writelines(lines)
 
             images.append(self._build_image_dict(id=id, image=image, filename=output_path))
