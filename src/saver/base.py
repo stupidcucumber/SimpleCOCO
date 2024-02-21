@@ -22,7 +22,7 @@ class Saver:
                     'id': id,
                     'width': image.shape[1],
                     'height': image.shape[0],
-                    'file_name': filename,
+                    'file_name': str(filename),
                     'license': None,
                     'date_captured': None 
         }
