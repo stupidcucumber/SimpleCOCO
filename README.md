@@ -10,13 +10,22 @@ python -m pip install -r requirements.txt
 # Interface
 ## CLI
 ```
-usage: main.py [-h] [--root ROOT] [--output OUTPUT] [--format FORMAT]
+usage: main.py [-h] [--root ROOT] [--output OUTPUT] [--format FORMAT] [--ttsplit TTSPLIT] [-vw VIEWPORT_WIDTH] [-vh VIEWPORT_HEIGHT] [--image-width IMAGE_WIDTH] [--image-height IMAGE_HEIGHT]
 
-optional arguments:
-  -h, --help       show this help message and exit
-  --root ROOT      Path to the folder with input images.
-  --output OUTPUT  Path to the folder where dataset will be stored.
-  --format FORMAT  Choose between 'standard' and 'tficon' format of COCO dataset.
+options:
+  -h, --help            show this help message and exit
+  --root ROOT           Path to the folder with input images.
+  --output OUTPUT       Path to the folder where dataset will be stored.
+  --format FORMAT       Choose between 'standard' and 'tficon' format of COCO dataset.
+  --ttsplit TTSPLIT     Value between 0.0 and 1.0 that sets the size of the train part.
+  -vw VIEWPORT_WIDTH, --viewport-width VIEWPORT_WIDTH
+                        Width of the viewport window.
+  -vh VIEWPORT_HEIGHT, --viewport-height VIEWPORT_HEIGHT
+                        Height of the viewport window.
+  --image-width IMAGE_WIDTH
+                        Width of the image to save. If None than the width will not change.
+  --image-height IMAGE_HEIGHT
+                        Height of the image to save. If None than the height will not change.
 ```
 
 The example usage of the tool is:
