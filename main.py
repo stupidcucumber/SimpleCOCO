@@ -14,6 +14,10 @@ def parse_arguments():
                         help='Choose between \'standard\' and \'tficon\' format of COCO dataset.')
     parser.add_argument('--ttsplit', type=float, default=1.0,
                         help='Value between 0.0 and 1.0 that sets the size of the train part.')
+    parser.add_argument('-vw', '--viewport-width', type=int, default=512,
+                        help='Width of the viewport window.')
+    parser.add_argument('-vh', '--viewport-height', type=int, default=512,
+                        help='Height of the viewport window.')
 
     return parser.parse_args()
 
@@ -30,5 +34,6 @@ if __name__ == '__main__':
         saver = GOALSaver(output=args.output, train_test_split=args.ttsplit)
     
     print('Paths are: ', walker.paths)
-    labeler = ImageLabeler(saver=saver, directory_walker=walker)
+    labeler = ImageLabeler(saver=saver, directory_walker=walker,
+                           width=args.viewport_width, height=args.viewport_height)
     labeler.start()
