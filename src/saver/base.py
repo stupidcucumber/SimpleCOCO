@@ -4,18 +4,21 @@ import cv2
 
 
 class Saver:
-    def __init__(self, output: pathlib.Path, train_test_split: float | None=None):
-
+    def __init__(self, output: pathlib.Path, train_test_split: float | None=None,
+                 image_width: int | None = None, image_height: int | None = None):
         if output.exists():
             raise ValueError('Folder with the name %s already exists!' % str(output))
-        
         output.mkdir()
         self.output = output
         self.train_test_split = train_test_split
+        self.width = image_width
+        self.height = image_height
 
     def _process_image(self, image_path: pathlib.Path) -> cv2.Mat:
         image = cv2.imread(str(image_path))
-        return cv2.resize(image, dsize=(512, 512))
+        if self.width and self.height:
+            image = cv2.resize(image, dsize=(self.width, self.height))
+        return image
     
     def _build_image_dict(self, id, image: cv2.Mat, filename: str):
         return  {
