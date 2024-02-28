@@ -1,11 +1,19 @@
 from .base import Saver
-import os, pathlib
+import pathlib
 import numpy as np
 import cv2
 
 
 class TFIconSaver(Saver):
-    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list):
+    def _convert_bbox(bbox: list[int], image_width: int, image_height: int, 
+                      viewport_width: int, viewport_height: int) -> int:
+        x, y, w, h = bbox
+        x, w = x * image_width / viewport_width, w * image_width / viewport_width
+        y, h = y * image_height / viewport_height, h * image_height / viewport_height
+        return [x, y, w, h]
+
+    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list,
+                           view_width: int, view_height: int):
         annotation_id = 0
         for index, (image_path, bboxes) in enumerate(labeled.items()):
             entry_folder = self.output.joinpath(str(index))
@@ -17,10 +25,11 @@ class TFIconSaver(Saver):
 
             cv2.imwrite(str(output_image_path), image)
             cv2.imwrite(str(bg_image_path), image)
-
+            height, width, _ = image.shape
             for bbox_index, bbox in enumerate(bboxes):
-                x, y, w, h = bbox
-                mask = np.zeros(shape=(512, 512))
+                x, y, w, h = self._convert_bbox(bbox, image_width=width, image_height=height,
+                                                viewport_width=view_width, viewport_height=view_height)
+                mask = np.zeros(shape=(width, height))
                 mask[y:y+h, x:x+w] = 255
 
                 mask_path = entry_folder.joinpath('mask_bg_fg_%d.png' % bbox_index)
