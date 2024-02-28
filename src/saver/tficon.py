@@ -5,12 +5,12 @@ import cv2
 
 
 class TFIconSaver(Saver):
-    def _convert_bbox(bbox: list[int], image_width: int, image_height: int, 
+    def _convert_bbox(self, bbox: list[int], image_width: int, image_height: int, 
                       viewport_width: int, viewport_height: int) -> int:
         x, y, w, h = bbox
         x, w = x * image_width / viewport_width, w * image_width / viewport_width
         y, h = y * image_height / viewport_height, h * image_height / viewport_height
-        return [x, y, w, h]
+        return [int(value) for value in [x, y, w, h]]
 
     def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list,
                            view_width: int, view_height: int):
@@ -27,7 +27,7 @@ class TFIconSaver(Saver):
             cv2.imwrite(str(bg_image_path), image)
             height, width, _ = image.shape
             for bbox_index, bbox in enumerate(bboxes):
-                x, y, w, h = self._convert_bbox(bbox, image_width=width, image_height=height,
+                x, y, w, h = self._convert_bbox(bbox=bbox, image_width=width, image_height=height,
                                                 viewport_width=view_width, viewport_height=view_height)
                 mask = np.zeros(shape=(width, height))
                 mask[y:y+h, x:x+w] = 255
