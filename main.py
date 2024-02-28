@@ -18,7 +18,10 @@ def parse_arguments():
                         help='Width of the viewport window.')
     parser.add_argument('-vh', '--viewport-height', type=int, default=512,
                         help='Height of the viewport window.')
-
+    parser.add_argument('--image-width', default=None,
+                        help='Width of the image to save. If None than the width will not change.')
+    parser.add_argument('--image-height', default=None,
+                        help='Height of the image to save. If None than the height will not change.')
     return parser.parse_args()
 
 
@@ -27,11 +30,14 @@ if __name__ == '__main__':
     print('Settings are: ', args)
     walker = DefaultDirectoryWalker(root=args.root, cache=False)
     if args.format == 'tficon':
-        saver = TFIconSaver(output=args.output, train_test_split=args.ttsplit)
+        saver = TFIconSaver(output=args.output, train_test_split=args.ttsplit,
+                          image_width=args.image_width, image_height=args.image_height)
     elif args.format == 'standard':
-        saver = DefaultSaver(output=args.output, train_test_split=args.ttsplit)
+        saver = DefaultSaver(output=args.output, train_test_split=args.ttsplit,
+                          image_width=args.image_width, image_height=args.image_height)
     elif args.format == 'goal':
-        saver = GOALSaver(output=args.output, train_test_split=args.ttsplit)
+        saver = GOALSaver(output=args.output, train_test_split=args.ttsplit,
+                          image_width=args.image_width, image_height=args.image_height)
     
     print('Paths are: ', walker.paths)
     labeler = ImageLabeler(saver=saver, directory_walker=walker,
