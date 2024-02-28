@@ -41,10 +41,11 @@ class Saver:
                     'iscrowd': 0
         }
     
-    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list):
+    def build_saving_lists(self, labeled: dict[pathlib.Path, list], images: list, annotations: list, 
+                           view_width: int, view_height: int):
         raise NotImplementedError('This method must be implemented in the derived class!')
 
-    def save(self, result: dict) -> str:
+    def save(self, result: dict, view_width: int, view_height: int) -> str:
         images = []
         annotations = []
         categories = [
@@ -55,7 +56,8 @@ class Saver:
             }
         ]
         
-        self.build_saving_lists(labeled=result, images=images, annotations=annotations)
+        self.build_saving_lists(labeled=result, images=images, annotations=annotations,
+                                view_width=view_width, view_height=view_height)
 
         final = {
             'images': images,

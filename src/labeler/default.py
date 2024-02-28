@@ -49,7 +49,7 @@ class ImageLabeler:
             if pressed_key == ord('q'):
                 label = False
             elif pressed_key == ord('s'):
-                self.saver.save(result=self.processed)
+                self.saver.save(result=self.processed, view_width=self.width, view_height=self.height)
             elif pressed_key == ord('n'):
                 if current_index < len(self.walker) - 1:
                     current_index += 1
