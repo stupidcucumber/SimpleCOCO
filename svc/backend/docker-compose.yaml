@@ -1,6 +1,17 @@
 services:
+  postgres-db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/:/data/db
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=santa
+
   backend-api:
     build: .
     ports:
       - "8080:8000"
-      
