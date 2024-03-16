@@ -1,11 +1,10 @@
 import sys
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QApplication
-from src.application.window import MainWindow
+from svc.client.window import EntryWindow
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = EntryWindow()
     window.show()
     app.exec()
