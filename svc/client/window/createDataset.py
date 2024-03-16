@@ -26,7 +26,6 @@ class CreateDataset(QMainWindow):
         if self.dataset_name:
             url = 'http://%s:%s/fill/dataset' % (self.host, self.port)
             result = post_dataset(url=url, name=self.dataset_name)
-            print(result)
             self.parent_window.update()
             self.close()
 

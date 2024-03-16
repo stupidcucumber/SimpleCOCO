@@ -1,11 +1,9 @@
-from typing import Callable, overload
-from PyQt6.QtGui import QMouseEvent
+from typing import Callable
 from PyQt6.QtWidgets import (
       QPushButton, 
       QWidget,
       QMainWindow
 )
-from ..window.annotator import AnnotatorWindow
 
 
 def create_button(parent: QWidget, text: str, slot: Callable | None = None) -> QPushButton:
@@ -16,19 +14,16 @@ def create_button(parent: QWidget, text: str, slot: Callable | None = None) -> Q
 
 
 class DatasetPushButton(QPushButton):
-    def __init__(self, parent: QMainWindow, dataset_id: int, name: str, 
-                 host: str, port: str):
+    def __init__(self, parent: QMainWindow, name: str, annotator_window: QMainWindow):
         super(DatasetPushButton, self).__init__(parent)
         self._parent = parent
-        self.dataset_id = dataset_id
-        self.host = host
-        self.port = port
+        self.annotator_window = annotator_window
         self.setText(name)
-
-    def mousePressEvent(self, event: QMouseEvent | None) -> None:
-        if not issubclass(type(self.parent()), QMainWindow):
-            TypeError('Parent of this widget can be only an object of subclass of class QMainWindow.')
-        annotator = AnnotatorWindow(dataset=self.dataset_id, host=self.host, port=self.port)
-        annotator.show()
+        self.pressed.connect(
+             slot=lambda: self.open_annotator()
+        )
+    
+    def open_annotator(self) -> None:
+        self.annotator_window.show()
         self._parent.close()
         

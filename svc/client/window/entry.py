@@ -64,8 +64,10 @@ class EntryWindow(QMainWindow):
         self.connected = True
         url = 'http://%s:%s/extract/datasets' % (self.host, self.port)
         names = get_dataset_names(url=url)
-        buttons = [DatasetPushButton(self, dataset_id=button[0], name=button[1],
-                                     host=self.host, port=self.port) for button in names]
+        buttons = [DatasetPushButton(self, name=button[1], annotator_window=AnnotatorWindow(dataset_id=button[0],
+                                                                                            host=self.host,
+                                                                                            port=self.port)) 
+                   for button in names]
         widget = setup_box(
             self,
             layout=QVBoxLayout(),
@@ -80,15 +82,6 @@ class EntryWindow(QMainWindow):
     def _open_create_dataset_window(self):
         window = CreateDataset(self, host=self.host, port=self.port)
         window.show()
-
-    def _open_annotator_window(self, dataset: str):
-        window = AnnotatorWindow(
-            dataset=dataset,
-            host=self.host,
-            port=self.port
-        )
-        window.show()
-        self.close()
 
     def _setup_layout(self) -> None:
         toolbar = setup_toolbar(parent=self,
