@@ -13,6 +13,8 @@ db_connection = setup_database_connection(
     host=os.environ['POSTGRES_HOST'],
     init_script=pathlib.Path('init.sql')
 )
+extract_router.set_connection(db_connection)
+fill_router.set_connection(db_connection)
 
 app = FastAPI()
 
