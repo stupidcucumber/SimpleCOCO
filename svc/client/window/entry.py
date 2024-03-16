@@ -1,13 +1,9 @@
-from typing import Callable
 from PyQt6.QtWidgets import (
     QMainWindow,
-    QPushButton,
     QVBoxLayout,
     QHBoxLayout,
-    QLayout,
     QWidget,
     QLabel,
-    QLineEdit,
     QSplitter
 )
 from PyQt6.QtGui import (
@@ -16,6 +12,8 @@ from PyQt6.QtGui import (
 )
 from PyQt6.QtCore import Qt
 from .createDataset import CreateDataset
+from .annotator import AnnotatorWindow
+from ..widget import DatasetPushButton
 from ..widget.toolbar import setup_toolbar
 from ..widget.button import create_button
 from ..widget.input import create_line_edit
@@ -66,7 +64,8 @@ class EntryWindow(QMainWindow):
         self.connected = True
         url = 'http://%s:%s/extract/datasets' % (self.host, self.port)
         names = get_dataset_names(url=url)
-        buttons = [create_button(parent=self, text=str(button)) for button in names]
+        buttons = [DatasetPushButton(self, dataset_id=button[0], name=button[1],
+                                     host=self.host, port=self.port) for button in names]
         widget = setup_box(
             self,
             layout=QVBoxLayout(),
@@ -81,6 +80,15 @@ class EntryWindow(QMainWindow):
     def _open_create_dataset_window(self):
         window = CreateDataset(self, host=self.host, port=self.port)
         window.show()
+
+    def _open_annotator_window(self, dataset: str):
+        window = AnnotatorWindow(
+            dataset=dataset,
+            host=self.host,
+            port=self.port
+        )
+        window.show()
+        self.close()
 
     def _setup_layout(self) -> None:
         toolbar = setup_toolbar(parent=self,
