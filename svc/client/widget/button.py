@@ -1,4 +1,5 @@
 from typing import Callable
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
       QPushButton, 
       QWidget,
@@ -48,5 +49,7 @@ class AnnotationImageButton(QWidget):
         layout.addWidget(self.image_icon)
         layout.addWidget(QLabel('Image id: %d' % self.image_id, self))
         layout.addWidget(QLabel('Number of annotations: %d' % self.annotations_num, self))
+        self.setAutoFillBackground(True)
         self.setLayout(layout)
-        self.setProperty('background-color', '#D3D3D3')
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setStyleSheet('AnnotationImageButton:hover{background-color: #606060;}')
