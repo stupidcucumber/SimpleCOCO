@@ -4,13 +4,13 @@ from PyQt6.QtWidgets import (
     QWidget
 )
 from PyQt6.QtGui import (
-    QPixmap
+    QPixmap,
+    QImage
 )
 
 
 class AnnotationImageIcon(QLabel):
-    def __init__(self, parent: QWidget, width: int, height: int, image_path: pathlib.Path | str) -> None:
+    def __init__(self, parent: QWidget, width: int, height: int, image: QImage) -> None:
         super(AnnotationImageIcon, self).__init__(parent)
-        pixmap = QPixmap(str(image_path))
-        self.setPixmap(pixmap)
+        self.setPixmap(QPixmap(image))
         self.setFixedSize(width, height)

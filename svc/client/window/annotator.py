@@ -4,9 +4,11 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QHBoxLayout
 )
-from ..widget import AnnotationImageIcon
+from PyQt6.QtGui import QImage
+from ..widget import AnnotationImageButton
 from ..widget.toolbar import setup_toolbar
 from ..widget.layout import setup_box
+from ..widget.action import create_action
 
 
 class AnnotatorWindow(QMainWindow):
@@ -19,14 +21,20 @@ class AnnotatorWindow(QMainWindow):
 
     def _setup_layout(self) -> None:
         self.setWindowTitle('Annotator: %s' % self.dataset_id)
-        toolbar = setup_toolbar(parent=self, items=[], 
+        toolbar = setup_toolbar(parent=self, items=[
+                                    create_action(text='Load images', parent=self),
+                                    create_action(text='Export dataset', parent=self)
+                                ], 
                                 orientation=Qt.Orientation.Horizontal)
         self.addToolBar(toolbar)
         widget = setup_box(
             parent=self,
             layout=QHBoxLayout(),
-            widgets=[AnnotationImageIcon(self, width=200, height=200,
-                                         image_path='svc/client/graphics/logo.png') for i in range(10)]
+            widgets=[AnnotationImageButton(
+                parent=self,
+                image_id=0,
+                image=QImage('svc/client/graphics/logo.png')
+            ) for i in range(10)]
         )
         scroll_area = QScrollArea(self)
         scroll_area.setWidget(widget)

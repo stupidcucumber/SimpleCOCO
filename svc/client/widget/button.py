@@ -2,8 +2,14 @@ from typing import Callable
 from PyQt6.QtWidgets import (
       QPushButton, 
       QWidget,
-      QMainWindow
+      QMainWindow,
+      QVBoxLayout,
+      QLabel
 )
+from PyQt6.QtGui import (
+     QImage
+)
+from .image import AnnotationImageIcon
 
 
 def create_button(parent: QWidget, text: str, slot: Callable | None = None) -> QPushButton:
@@ -26,4 +32,21 @@ class DatasetPushButton(QPushButton):
     def open_annotator(self) -> None:
         self.annotator_window.show()
         self._parent.close()
-        
+
+
+class AnnotationImageButton(QWidget):
+    def __init__(self, parent: QWidget, image_id: int, image: QImage,
+                 annotations_num: int = 0) -> None:
+        super(AnnotationImageButton, self).__init__(parent)
+        self.image_icon = AnnotationImageIcon(parent=self, width=200, height=400, image=image)
+        self.image_id = image_id
+        self.annotations_num = annotations_num
+        self._set_layout()
+
+    def _set_layout(self) -> None:
+        layout = QVBoxLayout()
+        layout.addWidget(self.image_icon)
+        layout.addWidget(QLabel('Image id: %d' % self.image_id, self))
+        layout.addWidget(QLabel('Number of annotations: %d' % self.annotations_num, self))
+        self.setLayout(layout)
+        self.setProperty('background-color', '#D3D3D3')
