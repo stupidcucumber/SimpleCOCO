@@ -4,9 +4,9 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel
 )
-from ..widget.layout import setup_box
-from ..widget.input import create_line_edit
-from ..widget.button import create_button
+from ..widget.utility import setup_box
+from ..widget.utility import create_line_edit
+from ..widget.utility import create_button
 from ..request.dataset import post_dataset
 
 

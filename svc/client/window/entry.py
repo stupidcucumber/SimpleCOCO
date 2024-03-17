@@ -13,11 +13,10 @@ from PyQt6.QtGui import (
 from PyQt6.QtCore import Qt
 from .createDataset import CreateDataset
 from .annotator import AnnotatorWindow
-from ..widget import DatasetPushButton
-from ..widget.toolbar import setup_toolbar
-from ..widget.button import create_button
-from ..widget.input import create_line_edit
-from ..widget.layout import setup_box
+from ..widget.utility import setup_toolbar
+from ..widget.utility import create_button
+from ..widget.utility import create_line_edit
+from ..widget.utility import setup_box
 from ..request.dataset import get_dataset_names
 
 
@@ -27,6 +26,7 @@ class EntryWindow(QMainWindow):
         self.host = '127.0.0.1'
         self.port = '8080'
         self.connected = False
+        self.annotator_window = None
         self._setup_layout()
 
     def set_host(self, new_host: str | None = None) -> None:
@@ -64,10 +64,10 @@ class EntryWindow(QMainWindow):
         self.connected = True
         url = 'http://%s:%s/extract/datasets' % (self.host, self.port)
         names = get_dataset_names(url=url)
-        buttons = [DatasetPushButton(self, name=button[1], annotator_window=AnnotatorWindow(dataset_id=button[0],
-                                                                                            host=self.host,
-                                                                                            port=self.port)) 
-                   for button in names]
+        buttons = [
+            create_button(parent=self, text=dataset[1], slot=lambda: self._open_annotator_window(dataset_id=dataset[0]))
+            for dataset in names
+        ]
         widget = setup_box(
             self,
             layout=QVBoxLayout(),
@@ -82,6 +82,10 @@ class EntryWindow(QMainWindow):
     def _open_create_dataset_window(self):
         window = CreateDataset(self, host=self.host, port=self.port)
         window.show()
+    
+    def _open_annotator_window(self, dataset_id: int) -> None:
+        self.annotator_window = AnnotatorWindow(self, dataset_id=dataset_id, host=self.host, port=self.port)
+        self.annotator_window.show()
 
     def _setup_layout(self) -> None:
         toolbar = setup_toolbar(parent=self,
