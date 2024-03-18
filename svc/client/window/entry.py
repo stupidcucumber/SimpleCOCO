@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
     QHBoxLayout,
+    QScrollArea,
     QWidget,
     QLabel,
     QSplitter
@@ -13,6 +14,7 @@ from PyQt6.QtGui import (
 from PyQt6.QtCore import Qt
 from .createDataset import CreateDataset
 from .annotator import AnnotatorWindow
+from ..widget.button import DatasetPushButton
 from ..widget.utility import setup_toolbar
 from ..widget.utility import create_button
 from ..widget.utility import create_line_edit
@@ -64,15 +66,22 @@ class EntryWindow(QMainWindow):
         self.connected = True
         url = 'http://%s:%s/extract/datasets' % (self.host, self.port)
         names = get_dataset_names(url=url)
-        buttons = [
-            create_button(parent=self, text=dataset[1], slot=lambda: self._open_annotator_window(dataset_id=dataset[0]))
-            for dataset in names
-        ]
+        scrollarea = QScrollArea(self)
+        widget = QWidget()
+        layout = QVBoxLayout()
+        layout.setSpacing(10)
+        layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
+        for dataset_id, dataset_name in names:
+            button = DatasetPushButton(self, name=dataset_name, slot=self._open_annotator_window,
+                                       dataset_id=dataset_id)
+            layout.addWidget(button)
+        widget.setLayout(layout)
+        scrollarea.setWidget(widget)
         widget = setup_box(
             self,
             layout=QVBoxLayout(),
             widgets=[
-                *buttons,
+                scrollarea,
                 create_button(parent=self, text='Create dataset', slot=lambda: self._open_create_dataset_window()),
                 create_button(parent=self, text='Disconnect', slot=lambda: self.setCentralWidget(self._create_login_widget()))
             ]

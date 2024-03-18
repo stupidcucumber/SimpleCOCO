@@ -24,7 +24,7 @@ class AnnotatorWindow(QMainWindow):
 
     def _setup_layout(self) -> None:
         self.setMinimumWidth(1400)
-        self.setMinimumHeight(900)
+        self.setMinimumHeight(800)
         self.setWindowTitle('Annotator: %s' % self.dataset_id)
         toolbar = setup_toolbar(parent=self, items=[
                                     create_action(text='Load images', parent=self),

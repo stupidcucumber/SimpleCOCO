@@ -7,7 +7,7 @@ from PyQt6.QtGui import (
 )
 
 
-def create_action(text: str, parent: QWidget, slot: Callable | None = None) -> None:
+def create_action(text: str, parent: QWidget, slot: Callable | None = None) -> QAction:
     action = QAction(text, parent)
     if slot:
         action.triggered.connect(slot=slot)
