@@ -2,13 +2,14 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QMainWindow,
     QScrollArea,
-    QGridLayout,
+    QVBoxLayout,
+    QHBoxLayout,
     QWidget
 )
-from PyQt6.QtGui import QImage
-from ..widget.button import AnnotationImageButton
+from ..widget.page import PageScroller
 from ..widget.utility import setup_toolbar
-from ..widget.utility import create_action
+from ..widget.utility import create_action, create_button
+from ..widget.utility import setup_box
 
 
 class AnnotatorWindow(QMainWindow):
@@ -34,17 +35,20 @@ class AnnotatorWindow(QMainWindow):
                                 ], 
                                 orientation=Qt.Orientation.Horizontal)
         self.addToolBar(toolbar)
-        widget = QWidget(self)
-        layout = QGridLayout()
-        for row in range(self._rows):
-            for column in range(self._columns):
-                image_block = AnnotationImageButton(
-                    parent=self,
-                    image_id=0,
-                    image=QImage('svc/client/graphics/logo.png')
-                )
-                layout.addWidget(image_block, row, column)
-        widget.setLayout(layout)
+        page_scroller = PageScroller(parent=self, dataset_url='', max_images=10, max_columns=3)
         scroll_area = QScrollArea()
-        scroll_area.setWidget(widget)
-        self.setCentralWidget(scroll_area)
+        scroll_area.setWidget(page_scroller)
+        self.setCentralWidget(
+            setup_box(
+                parent=self, layout=QVBoxLayout(),
+                widgets=[
+                    scroll_area,
+                    setup_box(self, layout=QHBoxLayout(),
+                        widgets=[
+                            create_button(parent=self, text='<< Previous Page'),
+                            create_button(parent=self, text='Next Page >>')
+                        ]        
+                    )
+                ]
+            )
+        )
