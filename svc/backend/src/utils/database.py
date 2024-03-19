@@ -1,6 +1,6 @@
 import psycopg2
 import pathlib
-from psycopg2._psycopg import connection
+from psycopg2._psycopg import connection, cursor
 
 
 def setup_database_connection(db_name: str, user: str, password: str, port: str, host: str, 
@@ -14,3 +14,13 @@ def setup_database_connection(db_name: str, user: str, password: str, port: str,
                 cursor.execute(init_f.read())
     result.commit()
     return result
+
+
+def extract_images(dataset_id: int, cursor: cursor) -> list:
+    cursor.execute(
+        '''
+        SELECT * FROM images WHERE dataset_id=%s;
+        ''', (str(dataset_id),)
+    )
+    entries = [[*entry[:2], bytes(entry[2])] for entry in cursor.fetchall()]
+    return entries

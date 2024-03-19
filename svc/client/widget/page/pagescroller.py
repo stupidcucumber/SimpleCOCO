@@ -9,25 +9,40 @@ from PyQt6.QtGui import (
 from .page import Page
 from ..image import AnnotationImageIcon
 from ..button import AnnotationImageButton
+from ...request.image import download_icons
+from ...utils.image import base64tobytes
 
 
 class PageScroller(QWidget):
-    def __init__(self, parent: QObject, dataset_url: str, 
+    def __init__(self, parent: QObject, host: str, port: str, dataset_id: str,
                  max_images: int, max_columns: int) -> None:
         super(PageScroller, self).__init__(parent)
-        self.dataset_url = dataset_url
+        self.host, self.port, self.dataset_id = host, port, dataset_id
         self.current_page = 0
         self.max_images = max_images
         self.max_columns = max_columns
         self._setup_layout()
+
+    def _instantiate_image(self, data: bytes) -> QImage:
+        image = QImage()
+        image.loadFromData(data)
+        return image
+    
+    def _clear_layout(self, layout):
+        while layout.count():
+            child = layout.takeAt(0)
+            if child.widget():
+                child.widget().deleteLater()
     
     def _extract_icons(self, page_blob: int = 0) -> list[AnnotationImageIcon]:
+        images = download_icons(self.host, self.port, self.dataset_id, 
+                                 self.max_images, page_blob)
         return [
             AnnotationImageButton(
                     parent=self,
-                    image_id=0,
-                    image=QImage('svc/client/graphics/logo.png')
-            ) for _ in range(0)
+                    image_id=image_id,
+                    image=self._instantiate_image(base64tobytes(image_base64))
+            ) for image_id, _, image_base64 in images
         ]
 
     def _instantiate_page(self, page_blob: int = 0) -> Page:
@@ -44,8 +59,16 @@ class PageScroller(QWidget):
             self._setup_layout()
 
     def _setup_layout(self) -> None:
-        layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
-        layout.addWidget(
+        if not self.layout():
+            layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
+            layout.addWidget(
+                self._instantiate_page(self.current_page)
+            )
+            self.setLayout(layout)
+            return
+        
+        self._clear_layout(self.layout())
+        self.layout().addWidget(
             self._instantiate_page(self.current_page)
         )
-        self.setLayout(layout)
+        self.update()
