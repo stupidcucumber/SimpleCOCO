@@ -9,15 +9,16 @@ from PyQt6.QtGui import (
 from .page import Page
 from ..image import AnnotationImageIcon
 from ..button import AnnotationImageButton
-from ...request.image import download_icons
+from ...request.image import download_images
 from ...utils.image import base64tobytes
+from ...utils import Connection
 
 
 class PageScroller(QWidget):
-    def __init__(self, parent: QObject, host: str, port: str, dataset_id: str,
+    def __init__(self, parent: QObject, connection: Connection, dataset_id: str,
                  max_images: int, max_columns: int) -> None:
         super(PageScroller, self).__init__(parent)
-        self.host, self.port, self.dataset_id = host, port, dataset_id
+        self.connection, self.dataset_id = connection, dataset_id
         self.current_page = 0
         self.max_images = max_images
         self.max_columns = max_columns
@@ -35,14 +36,17 @@ class PageScroller(QWidget):
                 child.widget().deleteLater()
     
     def _extract_icons(self, page_blob: int = 0) -> list[AnnotationImageIcon]:
-        images = download_icons(self.host, self.port, self.dataset_id, 
+        images = download_images(self.connection.build_url(), self.dataset_id, 
                                  self.max_images, page_blob)
         return [
-            AnnotationImageButton(
+                AnnotationImageButton(
                     parent=self,
                     image_id=image_id,
-                    image=self._instantiate_image(base64tobytes(image_base64))
-            ) for image_id, _, image_base64 in images
+                    image_name = image_name,
+                    image_type_id = type_id,
+                    image=self._instantiate_image(base64tobytes(image_base64)
+                )
+            ) for image_id, _, type_id, image_name, image_base64 in images
         ]
 
     def _instantiate_page(self, page_blob: int = 0) -> Page:

@@ -1,25 +1,26 @@
 import requests
-import json
 
 
-def upload_images(host: str, port: str, dataset_id: int, body: dict) -> list:
+def upload_image(url: str, dataset_id: int, image_type_id: int, 
+                 image_name: str, image_base64: str) -> dict:
     response = requests.post(
-        url='http://%s:%s/fill/images' % (str(host), str(port)), params={
-            'dataset_id': dataset_id
-        },
-        json=body
+        url=url + '/images/insert',
+        json={
+            'datasetId': dataset_id,
+            'imageTypeId': image_type_id,
+            'imageName': image_name,
+            'imageBase64': image_base64
+        }
     )
     return response.json()
 
 
-def download_icons(host: str, port: str, dataset_id: int, page_size: int, page_number: int) -> list:
-    response = requests.get(
-        url='http://%s:%s/extract/icons' % (str(host), str(port)),
+def download_images(url: str, dataset_id: int, page_size: int, page_number: int) -> list:
+    return requests.get(
+        url=url + '/images/extract',
         params={
             'dataset_id': dataset_id,
-            'page_size': page_size,
-            'page_number': page_number
+            'pageSize': page_size,
+            'pageNumber': page_number
         }
     ).json()
-    
-    return response['images']
