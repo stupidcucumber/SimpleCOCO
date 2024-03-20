@@ -10,14 +10,14 @@ from PyQt6.QtWidgets import (
 
 
 class DatasetPushButton(QWidget):
-    def __init__(self, parent: QMainWindow, name: str, dataset_id: int,
-                 slot: Callable = lambda: None, 
-                 info: str | None = None):
+    def __init__(self, parent: QMainWindow, name: str, description: str, dataset_id: int,
+                 type_id: int, slot: Callable = lambda: None):
         super(DatasetPushButton, self).__init__(parent)
         self._parent = parent
         self.name = name
+        self.description = description
         self.dataset_id = dataset_id
-        self.info = info
+        self.type_id = type_id
         self.slot = slot
         self.annotator_window = None
         self._set_layout()
@@ -25,9 +25,11 @@ class DatasetPushButton(QWidget):
     def _set_layout(self) -> None:
         layout = QVBoxLayout()
         name = QLabel(self.name, self)
-        info = QLabel('Dataset ID: %d' % self.dataset_id, self)
+        id = QLabel('Dataset ID: %d' % self.dataset_id, self)
+        description = QLabel(self.description, self)
         layout.addWidget(name)
-        layout.addWidget(info)
+        layout.addWidget(id)
+        layout.addWidget(description)
         self.setLayout(layout)
         self.setAutoFillBackground(True)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)

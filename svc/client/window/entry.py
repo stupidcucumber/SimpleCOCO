@@ -12,6 +12,7 @@ from PyQt6.QtGui import (
     QPixmap
 )
 from PyQt6.QtCore import Qt
+from ..utils import Connection
 from .createDataset import CreateDataset
 from .annotator import AnnotatorWindow
 from ..widget.button import DatasetPushButton
@@ -19,23 +20,22 @@ from ..widget.utility import setup_toolbar
 from ..widget.utility import create_button
 from ..widget.utility import create_line_edit
 from ..widget.utility import setup_box
-from ..request.dataset import get_dataset_names
+from ..request.dataset import get_datasets
 
 
 class EntryWindow(QMainWindow):
     def __init__(self) -> None:
         super(EntryWindow, self).__init__()
-        self.host = '127.0.0.1'
-        self.port = '8080'
+        self.connection = Connection(host='127.0.0.1', port='8080')
         self.connected = False
         self.annotator_window = None
         self._setup_layout()
 
     def set_host(self, new_host: str | None = None) -> None:
-        self.host = new_host
+        self.connection.host = new_host
 
     def set_port(self, new_port: str | None = None) -> None:
-        self.port = new_port
+        self.connection.port = new_port
 
     def update(self) -> None:
         if self.connected:
@@ -52,11 +52,11 @@ class EntryWindow(QMainWindow):
             widgets=[
                 setup_box(self, layout=QHBoxLayout(), widgets=[
                     QLabel('Host:', self), 
-                    create_line_edit(self, self.set_host, text=self.host, filler='0.0.0.0')
+                    create_line_edit(self, self.set_host, text=self.connection.host, filler='0.0.0.0')
                 ]),
                 setup_box(self, layout=QHBoxLayout(), widgets=[
                     QLabel('Port:', self), 
-                    create_line_edit(self, self.set_port, text=self.port, filler='5432')
+                    create_line_edit(self, self.set_port, text=self.connection.port, filler='5432')
                 ]),
                 create_button(self, text='Connect', slot=lambda: self.setCentralWidget(self._create_datasets_widget()))
             ]
@@ -64,16 +64,16 @@ class EntryWindow(QMainWindow):
     
     def _create_datasets_widget(self) -> QWidget:
         self.connected = True
-        url = 'http://%s:%s/extract/datasets' % (self.host, self.port)
-        names = get_dataset_names(url=url)
+        url = self.connection.build_url()
+        datasets = get_datasets(url=url)
         scrollarea = QScrollArea(self)
         widget = QWidget()
         layout = QVBoxLayout()
         layout.setSpacing(10)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        for dataset_id, dataset_name in names:
+        for dataset_id, type_id, dataset_name, dataset_description in datasets:
             button = DatasetPushButton(self, name=dataset_name, slot=self._open_annotator_window,
-                                       dataset_id=dataset_id)
+                                       dataset_id=dataset_id, type_id=type_id, description=dataset_description)
             layout.addWidget(button)
         widget.setLayout(layout)
         scrollarea.setWidget(widget)
@@ -89,11 +89,11 @@ class EntryWindow(QMainWindow):
         return widget
     
     def _open_create_dataset_window(self):
-        window = CreateDataset(self, host=self.host, port=self.port)
+        window = CreateDataset(self, connection=self.connection)
         window.show()
     
     def _open_annotator_window(self, dataset_id: int) -> None:
-        self.annotator_window = AnnotatorWindow(self, dataset_id=dataset_id, host=self.host, port=self.port)
+        self.annotator_window = AnnotatorWindow(self, dataset_id=dataset_id, connection=self.connection)
         self.annotator_window.show()
 
     def _setup_layout(self) -> None:

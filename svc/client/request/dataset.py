@@ -1,18 +1,18 @@
 import requests
 
 
-def get_dataset_names(url: str) -> list[str]:
-    response = requests.get(url=url, params={})
-    names = response.json()
-    print(names)
-    return names['datasets']
+def get_datasets(url: str) -> list[str]:
+    response = requests.get(url=url + '/datasets/extract', params={})
+    return response.json() 
 
 
-def post_dataset(url: str, name: str) -> None:
+def post_dataset(url: str, type_id: int, name: str, description: str) -> None:
     response = requests.post(
-        url=url,
-        params={
-            'name': name
+        url=url + '/datasets/insert',
+        json={
+            'datasetTypeId': type_id,
+            'datasetName': name,
+            'datasetDescription': description
         }
     )
     return response.json()
