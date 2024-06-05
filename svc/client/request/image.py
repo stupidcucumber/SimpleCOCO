@@ -16,7 +16,7 @@ def upload_generated_image(url: str, generated_image: GeneratedImage) -> dict:
 def get_images(url: str, dataset_id: int) -> list[GeneratedImage]:
     response = requests.get(
         url=url + '/extract/generatedImages',
-        json={
+        params={
             'datasetId': dataset_id
         }
     )
@@ -24,7 +24,7 @@ def get_images(url: str, dataset_id: int) -> list[GeneratedImage]:
     return [
         GeneratedImage(**item) for item in response.json()
     ]
-    
+
 
 def delete_image(url: str, generated_image: GeneratedImage):
     pass
@@ -32,12 +32,12 @@ def delete_image(url: str, generated_image: GeneratedImage):
 
 def download_generated_images(url: str, dataset_id: int, page_size: int, page_number: int) -> list[GeneratedImage]:
     response = requests.get(
-        url=url + '/images/extract',
+        url=url + '/extract/generatedImagesGlob',
         params={
-            'dataset_id': dataset_id,
+            'datasetId': dataset_id,
             'pageSize': page_size,
             'pageNumber': page_number
         }
     )
     response.raise_for_status()
-    return response.json()
+    return [GeneratedImage(**item) for item in response.json()]

@@ -45,7 +45,7 @@ CREATE TABLE annotations (
     norm_width NUMERIC(5),
     norm_height NUMERIC(5),
     CONSTRAINT fk_image
-        FOREIGN KEY(image_id) REFERENCES images(image_id),
+        FOREIGN KEY(image_id) REFERENCES generated_images(image_id),
     CONSTRAINT fk_class
         FOREIGN KEY(class_id) REFERENCES classes(class_id)
 );

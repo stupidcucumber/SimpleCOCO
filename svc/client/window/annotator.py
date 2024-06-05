@@ -13,14 +13,18 @@ from ..widget.utility import setup_toolbar
 from ..widget.utility import create_action, create_button
 from ..widget.utility import setup_box
 from ..utils.image import image2base64
-from ..request.image import upload_image
+from ..request.image import upload_generated_image
 from ..utils import Connection
+from ...backend.src.structs import (
+    Dataset,
+    GeneratedImage
+)
 
 
 class AnnotatorWindow(QMainWindow):
-    def __init__(self, parent: QWidget, dataset_id: int, connection: Connection):
+    def __init__(self, parent: QWidget, dataset: Dataset, connection: Connection):
         super(AnnotatorWindow, self).__init__(parent)
-        self.dataset_id = dataset_id
+        self.dataset = dataset
         self.connection = connection
         self._rows = 2
         self._columns = 6
@@ -34,19 +38,20 @@ class AnnotatorWindow(QMainWindow):
         for image_format in formats:
             image_files += list(directory_name.glob('*%s' % image_format))
         for image_path in image_files:
-            response = upload_image(
+            _ = upload_generated_image(
                 url=self.connection.build_url(),
-                dataset_id=self.dataset_id,
-                image_name=image_path.name,
-                image_base64=image2base64(image_path),
-                image_type_id=0
+                generated_image=GeneratedImage(
+                    imageData=image2base64(image_path),
+                    datasetId=self.dataset.datasetId
+                )
             )
 
     def _setup_layout(self) -> None:
         self.setMinimumWidth(1400)
         self.setMinimumHeight(800)
-        self.setWindowTitle('Annotator: %s' % self.dataset_id)
-        toolbar = setup_toolbar(parent=self, items=[
+        self.setWindowTitle('Annotator: %s' % self.dataset.datasetName)
+        toolbar = setup_toolbar(parent=self,
+                                items=[
                                     create_action(text='Upload images', parent=self, slot=self._upload_images),
                                     create_action(text='Export dataset', parent=self),
                                     create_action(text='Dataset Info', parent=self),
@@ -55,7 +60,7 @@ class AnnotatorWindow(QMainWindow):
                                 orientation=Qt.Orientation.Horizontal)
         self.addToolBar(toolbar)
         page_scroller = PageScroller(parent=self, connection=self.connection, 
-                                     dataset_id=self.dataset_id, 
+                                     dataset_id=self.dataset.datasetId, 
                                      max_images=20, max_columns=5)
         scroll_area = QScrollArea()
         scroll_area.setWidget(page_scroller)
@@ -64,7 +69,9 @@ class AnnotatorWindow(QMainWindow):
                 parent=self, layout=QVBoxLayout(),
                 widgets=[
                     scroll_area,
-                    setup_box(self, layout=QHBoxLayout(),
+                    setup_box(
+                        self, 
+                        layout=QHBoxLayout(),
                         widgets=[
                             create_button(parent=self, text='<< Previous Page', slot=page_scroller.previous_page),
                             create_button(parent=self, text='Next Page >>', slot=page_scroller.next_page)

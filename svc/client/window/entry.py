@@ -21,6 +21,9 @@ from ..widget.utility import create_button
 from ..widget.utility import create_line_edit
 from ..widget.utility import setup_box
 from ..request.dataset import get_datasets
+from ...backend.src.structs import (
+    Dataset
+)
 
 
 class EntryWindow(QMainWindow):
@@ -72,9 +75,8 @@ class EntryWindow(QMainWindow):
         layout.setSpacing(10)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
         if len(datasets) > 0:
-            for dataset_id, dataset_name, dataset_description in datasets:
-                button = DatasetPushButton(self, name=dataset_name, slot=self._open_annotator_window,
-                                        dataset_id=dataset_id, description=dataset_description)
+            for dataset in datasets:
+                button = DatasetPushButton(self, dataset=dataset, slot=self._open_annotator_window)
                 layout.addWidget(button)
         widget.setLayout(layout)
         scrollarea.setWidget(widget)
@@ -93,8 +95,8 @@ class EntryWindow(QMainWindow):
         window = CreateDataset(self, connection=self.connection)
         window.show()
     
-    def _open_annotator_window(self, dataset_id: int) -> None:
-        self.annotator_window = AnnotatorWindow(self, dataset_id=dataset_id, connection=self.connection)
+    def _open_annotator_window(self, dataset: Dataset) -> None:
+        self.annotator_window = AnnotatorWindow(self, dataset=dataset, connection=self.connection)
         self.annotator_window.show()
 
     def _setup_layout(self) -> None:

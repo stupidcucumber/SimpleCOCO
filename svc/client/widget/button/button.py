@@ -7,25 +7,26 @@ from PyQt6.QtWidgets import (
       QVBoxLayout,
       QLabel
 )
+from ....backend.src.structs import (
+    Dataset
+)
 
 
 class DatasetPushButton(QWidget):
-    def __init__(self, parent: QMainWindow, name: str, description: str, dataset_id: int,
-                 slot: Callable = lambda: None):
+    def __init__(self, parent: QMainWindow, dataset: Dataset,
+                 slot: Callable[[Dataset], None] = lambda: None):
         super(DatasetPushButton, self).__init__(parent)
         self._parent = parent
-        self.name = name
-        self.description = description
-        self.dataset_id = dataset_id
+        self.dataset = dataset
         self.slot = slot
         self.annotator_window = None
         self._set_layout()
 
     def _set_layout(self) -> None:
         layout = QVBoxLayout()
-        name = QLabel(self.name, self)
-        id = QLabel('Dataset ID: %d' % self.dataset_id, self)
-        description = QLabel(self.description, self)
+        name = QLabel(self.dataset.datasetName, self)
+        id = QLabel('Dataset ID: %d' % self.dataset.datasetId, self)
+        description = QLabel(self.dataset.datasetDescription, self)
         layout.addWidget(name)
         layout.addWidget(id)
         layout.addWidget(description)
@@ -35,5 +36,5 @@ class DatasetPushButton(QWidget):
         self.setStyleSheet('DatasetPushButton:hover{background-color: #606060;}')
 
     def mousePressEvent(self, a0: QMouseEvent | None) -> None:
-        return self.slot(self.dataset_id)
+        return self.slot(self.dataset)
         

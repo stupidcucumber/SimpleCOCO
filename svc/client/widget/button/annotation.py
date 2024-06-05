@@ -12,15 +12,13 @@ from ..image import AnnotationImageIcon
 
 class AnnotationImageButton(QWidget):
     def __init__(self, parent: QWidget, image_id: int,
-                 image_name: str,
-                 image_type_id: int,
+                 dataset_id: int,
                  image: QImage,
                  annotations_num: int = 0) -> None:
         super(AnnotationImageButton, self).__init__(parent)
         self.image_icon = AnnotationImageIcon(parent=self, width=200, height=400, image=image)
         self.image_id = image_id
-        self.image_name = image_name
-        self.image_type_id = image_type_id
+        self.dataset_id = dataset_id
         self.annotations_num = annotations_num
         self._set_layout()
 

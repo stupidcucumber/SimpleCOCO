@@ -5,7 +5,7 @@ from ...backend.src.structs import Class
 def get_classes(url: str, dataset_id: int) -> list[Class]:
     response = requests.get(
         url=url + '/extract/classes',
-        json={
+        params={
             'datasetId': dataset_id
         }
     )

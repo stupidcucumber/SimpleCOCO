@@ -119,3 +119,22 @@ def get_annotations(imageId: int) -> list[Annotation]:
             ) for item in raw_result
         ]
     return result
+
+
+@router.get('/generatedImagesGlob')
+def get_images_glob(datasetId: int, pageSize: int, pageNumber: int) -> list[GeneratedImage]:
+    result: list[GeneratedImage] = []
+    with db_connection.cursor() as cursor:
+        cursor.execute(
+            'SELECT * FROM generated_images WHERE dataset_id = %s',
+            (str(datasetId),)
+        )
+        raw_result = cursor.fetchall()[pageNumber * pageSize : (pageNumber + 1) * pageSize]
+        result = [
+            GeneratedImage(
+                imageId=item[0],
+                datasetId=item[1],
+                imageData=bytes(item[2])
+            ) for item in raw_result
+        ]
+    return result

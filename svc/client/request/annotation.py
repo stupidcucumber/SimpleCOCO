@@ -7,7 +7,7 @@ from ...backend.src.structs import (
 def get_annotations(url: str, dataset_id: int) -> list[Annotation]:
     response = requests.get(
         url=url + '/extract/annotations',
-        json={
+        params={
             'datasetId': dataset_id
         }
     )

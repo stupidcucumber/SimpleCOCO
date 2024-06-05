@@ -1,6 +1,7 @@
-from PyQt6.QtCore import QObject, Qt
+from PyQt6.QtCore import QObject
 from PyQt6.QtWidgets import (
     QWidget,
+    QLayout,
     QBoxLayout
 )
 from PyQt6.QtGui import (
@@ -9,7 +10,7 @@ from PyQt6.QtGui import (
 from .page import Page
 from ..image import AnnotationImageIcon
 from ..button import AnnotationImageButton
-from ...request.image import download_images
+from ...request.image import download_generated_images
 from ...utils.image import base64tobytes
 from ...utils import Connection
 
@@ -29,24 +30,27 @@ class PageScroller(QWidget):
         image.loadFromData(data)
         return image
     
-    def _clear_layout(self, layout):
+    def _clear_layout(self, layout: QLayout):
         while layout.count():
             child = layout.takeAt(0)
             if child.widget():
                 child.widget().deleteLater()
     
     def _extract_icons(self, page_blob: int = 0) -> list[AnnotationImageIcon]:
-        images = download_images(self.connection.build_url(), self.dataset_id, 
-                                 self.max_images, page_blob)
+        images = download_generated_images(
+            self.connection.build_url(), 
+            self.dataset_id, 
+            self.max_images, 
+            page_blob
+        )
         return [
                 AnnotationImageButton(
                     parent=self,
-                    image_id=image_id,
-                    image_name = image_name,
-                    image_type_id = type_id,
-                    image=self._instantiate_image(base64tobytes(image_base64)
+                    image_id=image.imageId,
+                    dataset_id=image.datasetId,
+                    image=self._instantiate_image(base64tobytes(image.imageData)
                 )
-            ) for image_id, _, type_id, image_name, image_base64 in images
+            ) for image in images
         ]
 
     def _instantiate_page(self, page_blob: int = 0) -> Page:
