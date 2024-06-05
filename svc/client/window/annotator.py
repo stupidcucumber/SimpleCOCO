@@ -45,12 +45,19 @@ class AnnotatorWindow(QMainWindow):
                     datasetId=self.dataset.datasetId
                 )
             )
+        self.update()
+        
+    def update(self) -> None:
+        self.setCentralWidget(None)
+        self.removeToolBar(self.toolbar)
+        self._setup_layout()
+        return super().update()
 
     def _setup_layout(self) -> None:
         self.setMinimumWidth(1400)
         self.setMinimumHeight(800)
         self.setWindowTitle('Annotator: %s' % self.dataset.datasetName)
-        toolbar = setup_toolbar(parent=self,
+        self.toolbar = setup_toolbar(parent=self,
                                 items=[
                                     create_action(text='Upload images', parent=self, slot=self._upload_images),
                                     create_action(text='Export dataset', parent=self),
@@ -58,7 +65,7 @@ class AnnotatorWindow(QMainWindow):
                                     create_action(text='Dataset Settings', parent=self)
                                 ], 
                                 orientation=Qt.Orientation.Horizontal)
-        self.addToolBar(toolbar)
+        self.addToolBar(self.toolbar)
         page_scroller = PageScroller(parent=self, connection=self.connection, 
                                      dataset_id=self.dataset.datasetId, 
                                      max_images=20, max_columns=5)
