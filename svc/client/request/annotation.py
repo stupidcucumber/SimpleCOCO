@@ -4,11 +4,11 @@ from ...backend.src.structs import (
 )
 
 
-def get_annotations(url: str, dataset_id: int) -> list[Annotation]:
+def get_annotations(url: str, image_id: int) -> list[Annotation]:
     response = requests.get(
         url=url + '/extract/annotations',
         params={
-            'datasetId': dataset_id
+            'imageId': image_id
         }
     )
     response.raise_for_status()
