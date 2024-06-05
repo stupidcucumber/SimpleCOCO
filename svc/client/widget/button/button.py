@@ -11,13 +11,12 @@ from PyQt6.QtWidgets import (
 
 class DatasetPushButton(QWidget):
     def __init__(self, parent: QMainWindow, name: str, description: str, dataset_id: int,
-                 type_id: int, slot: Callable = lambda: None):
+                 slot: Callable = lambda: None):
         super(DatasetPushButton, self).__init__(parent)
         self._parent = parent
         self.name = name
         self.description = description
         self.dataset_id = dataset_id
-        self.type_id = type_id
         self.slot = slot
         self.annotator_window = None
         self._set_layout()

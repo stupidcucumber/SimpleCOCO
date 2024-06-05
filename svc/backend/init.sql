@@ -5,11 +5,28 @@ CREATE TABLE classes (
 
 CREATE TABLE datasets (
     dataset_id SERIAL PRIMARY KEY,
-    dataset_name VARCHAR(255)
+    dataset_name VARCHAR(255),
+    dataset_description TEXT
 );
 
 CREATE TABLE images (
     image_id SERIAL PRIMARY KEY,
+    dataset_id INT,
+    image_data bytea,
+    CONSTRAINT fk_dataset
+        FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id)
+);
+
+CREATE TABLE backgrounds (
+    background_id SERIAL PRIMARY KEY,
+    dataset_id INT,
+    image_data bytea,
+    CONSTRAINT fk_dataset
+        FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id)
+);
+
+CREATE TABLE foregrounds (
+    foreground_id SERIAL PRIMARY KEY,
     dataset_id INT,
     image_data bytea,
     CONSTRAINT fk_dataset

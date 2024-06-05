@@ -12,15 +12,20 @@ def set_connection(_connection: connection) -> None:
 
 
 @router.post('/dataset')
-def post_dataset(name: str):
+def post_dataset(datasetName: str, datasetDescription: str):
     with db_connection.cursor() as cursor:
-        cursor.execute('INSERT INTO datasets (dataset_name) VALUES (%s);', (name, ))
+        cursor.execute(
+            'INSERT INTO datasets (dataset_name, dataset_description) VALUES (%s, %s);', 
+            (datasetName, datasetDescription)
+        )
         id = cursor.lastrowid
     db_connection.commit()
     return {
         'id': id,
-        'name': name
+        'datasetName': datasetName,
+        'datasetDescription': datasetDescription
     }
+
 
 @router.post('/classes')
 def post_classes():

@@ -41,7 +41,6 @@ class AnnotatorWindow(QMainWindow):
                 image_base64=image2base64(image_path),
                 image_type_id=0
             )
-        
 
     def _setup_layout(self) -> None:
         self.setMinimumWidth(1400)

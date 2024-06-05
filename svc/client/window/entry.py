@@ -71,10 +71,11 @@ class EntryWindow(QMainWindow):
         layout = QVBoxLayout()
         layout.setSpacing(10)
         layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        for dataset_id, type_id, dataset_name, dataset_description in datasets:
-            button = DatasetPushButton(self, name=dataset_name, slot=self._open_annotator_window,
-                                       dataset_id=dataset_id, type_id=type_id, description=dataset_description)
-            layout.addWidget(button)
+        if len(datasets) > 0:
+            for dataset_id, dataset_name, dataset_description in datasets:
+                button = DatasetPushButton(self, name=dataset_name, slot=self._open_annotator_window,
+                                        dataset_id=dataset_id, description=dataset_description)
+                layout.addWidget(button)
         widget.setLayout(layout)
         scrollarea.setWidget(widget)
         widget = setup_box(
