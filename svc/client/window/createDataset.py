@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import (
     QMainWindow,
     QVBoxLayout,
     QHBoxLayout,
-    QComboBox,
     QLabel
 )
 from ..utils import Connection
@@ -10,7 +9,9 @@ from ..widget.utility import setup_box
 from ..widget.utility import create_line_edit, create_area_edit
 from ..widget.utility import create_button
 from ..request.dataset import post_dataset
-from ..request.types import get_dataset_types
+from ...backend.src.structs import (
+    Dataset
+)
 
 
 class CreateDataset(QMainWindow):
@@ -18,21 +19,19 @@ class CreateDataset(QMainWindow):
         super(QMainWindow, self).__init__()
         self.parent_window = parent_window
         self.connection = connection
-        self.dataset_name = None
-        self.dataset_description = None
+        self.dataset: Dataset = Dataset(datasetName='', datasetDescription='')
         self._setup_layout()
 
     def set_dataset_name(self, name: str | None = None) -> None:
-        self.dataset_name = name
+        self.dataset.datasetName = name
 
     def set_dataset_description(self, text: str | None = None) -> None:
-        self.dataset_description = text
+        self.dataset.datasetDescription = text
 
     def add_dataset(self):
-        if self.dataset_name and self.dataset_description:
-            result = post_dataset(url=self.connection.build_url(), 
-                                  name=self.dataset_name,
-                                  description=self.dataset_description)
+        if self.dataset.datasetName:
+            _ = post_dataset(url=self.connection.build_url(), 
+                                  dataset=self.dataset)
             self.parent_window.update()
             self.close()
 
