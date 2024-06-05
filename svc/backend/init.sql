@@ -1,15 +1,18 @@
-CREATE TABLE classes (
-    class_id SERIAL PRIMARY KEY,
-    class_name VARCHAR(50)
-);
-
 CREATE TABLE datasets (
     dataset_id SERIAL PRIMARY KEY,
     dataset_name VARCHAR(255),
     dataset_description TEXT
 );
 
-CREATE TABLE images (
+CREATE TABLE classes (
+    class_id SERIAL PRIMARY KEY,
+    dataset_id INT,
+    class_name VARCHAR(50),
+    CONSTRAINT fk_dataset
+        FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id)
+);
+
+CREATE TABLE generated_images (
     image_id SERIAL PRIMARY KEY,
     dataset_id INT,
     image_data bytea,
