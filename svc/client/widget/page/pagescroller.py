@@ -9,6 +9,7 @@ from ..image import AnnotationImageIcon
 from ..button import AnnotationImageButton
 from ...window.editor import EditorWindow
 from ...request.image import download_generated_images
+from ...request.annotation import get_annotations
 from ...utils import Connection
 from ....backend.src.structs import (
     GeneratedImage
@@ -50,7 +51,10 @@ class PageScroller(QWidget):
                 AnnotationImageButton(
                     parent=self,
                     generated_image=image,
-                    slot=self._instantiate_editor_window
+                    slot=self._instantiate_editor_window,
+                    annotations_num=len(
+                        get_annotations(self.connection.build_url(), image_id=image.imageId)
+                    )
                 ) for image in images
         ]
 

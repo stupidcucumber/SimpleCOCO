@@ -31,9 +31,13 @@ CREATE TABLE backgrounds (
 CREATE TABLE foregrounds (
     foreground_id SERIAL PRIMARY KEY,
     dataset_id INT,
+    class_id INT,
     image_data bytea,
+    mask_data bytea,
     CONSTRAINT fk_dataset
-        FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id)
+        FOREIGN KEY(dataset_id) REFERENCES datasets(dataset_id),
+    CONSTRAINT fk_class
+        FOREIGN KEY(class_id) REFERENCES classes(class_id)
 );
 
 CREATE TABLE annotations (

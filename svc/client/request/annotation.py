@@ -6,7 +6,7 @@ from ...backend.src.structs import (
 
 def get_annotations(url: str, image_id: int) -> list[Annotation]:
     response = requests.get(
-        url=url + '/extract/annotations',
+        url=url + '/annotation/extract',
         params={
             'imageId': image_id
         }
@@ -19,7 +19,7 @@ def get_annotations(url: str, image_id: int) -> list[Annotation]:
     
 def post_annotation(url: str, annotation: Annotation) -> Annotation:
     response = requests.post(
-        url=url + '/fill/annotation',
+        url=url + '/annotation/insert',
         json=annotation.model_dump()
     )
     response.raise_for_status()

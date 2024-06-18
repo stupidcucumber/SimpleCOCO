@@ -6,7 +6,7 @@ from ...backend.src.structs import (
 
 def upload_generated_image(url: str, generated_image: GeneratedImage) -> dict:
     response = requests.post(
-        url=url + '/fill/generatedImage',
+        url=url + '/generatedImage/insert',
         json=generated_image.model_dump()
     )
     response.raise_for_status()
@@ -15,7 +15,7 @@ def upload_generated_image(url: str, generated_image: GeneratedImage) -> dict:
 
 def get_images(url: str, dataset_id: int) -> list[GeneratedImage]:
     response = requests.get(
-        url=url + '/extract/generatedImages',
+        url=url + '/generatedImage/extract',
         params={
             'datasetId': dataset_id
         }
@@ -32,7 +32,7 @@ def delete_image(url: str, generated_image: GeneratedImage):
 
 def download_generated_images(url: str, dataset_id: int, page_size: int, page_number: int) -> list[GeneratedImage]:
     response = requests.get(
-        url=url + '/extract/generatedImagesGlob',
+        url=url + '/generatedImage/extract',
         params={
             'datasetId': dataset_id,
             'pageSize': page_size,

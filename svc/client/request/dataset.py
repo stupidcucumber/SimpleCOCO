@@ -5,7 +5,7 @@ from ...backend.src.structs import (
 
 
 def get_datasets(url: str) -> list[Dataset]:
-    response = requests.get(url=url + '/extract/datasets')
+    response = requests.get(url=url + '/dataset/extract')
     response.raise_for_status()
     return [
         Dataset(**item) for item in response.json()
@@ -14,7 +14,7 @@ def get_datasets(url: str) -> list[Dataset]:
 
 def post_dataset(url: str, dataset: Dataset) -> Dataset:
     response = requests.post(
-        url=url + '/fill/dataset',
+        url=url + '/dataset/insert',
         json=dataset.model_dump()
     )
     response.raise_for_status()

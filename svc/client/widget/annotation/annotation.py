@@ -10,8 +10,10 @@ from ....backend.src.structs import (
 
 def color_from_annotation(annotation: Annotation) -> QColor:
     class_id = annotation.classId
-    channel_value = (class_id * 10) % 256,
-    return QColor.fromRgb(*[channel_value] * 4)
+    channel_value = (class_id * 10) % 256
+    channels = [channel_value] * 4
+    print(channels)
+    return QColor.fromRgb(*channels)
 
 
 class AnnotationWidget(QWidget):
@@ -21,13 +23,14 @@ class AnnotationWidget(QWidget):
         self.annotation = annotation
         self.image_width = image_width
         self.image_height = image_height
+        self.setGeometry(self._calculate_geometry())
         self._setup_layout()
         
     def _calculate_geometry(self) -> QRect:
-        width = int(self.image_width * self.annotation.normWidth)
-        height = int(self.image_height * self.annotation.normHeight)
-        center_x = self.image_width * self.annotation.centerX
-        center_y = self.image_height * self.annotation.centerY
+        width = int(self.image_width * self.annotation.wNorm)
+        height = int(self.image_height * self.annotation.hNorm)
+        center_x = self.image_width * self.annotation.cxNorm
+        center_y = self.image_height * self.annotation.cyNorm
         corner_x = int(center_x - width / 2)
         corner_y = int(center_y - height / 2)
         return QRect(
@@ -36,6 +39,5 @@ class AnnotationWidget(QWidget):
         )
         
     def _setup_layout(self) -> None:
-        self.setGeometry(self._calculate_geometry())
         color_hex = color_from_annotation(annotation=self.annotation).name()
         self.setStyleSheet('border: 2px solid %s;' % color_hex)

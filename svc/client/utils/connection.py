@@ -10,4 +10,4 @@ class Connection(BaseModel):
     port: str
 
     def build_url(self) -> str:
-        return 'http://%s:%s' % (self.host, self.port)
+        return 'http://' + ':'.join([self.host, self.port])

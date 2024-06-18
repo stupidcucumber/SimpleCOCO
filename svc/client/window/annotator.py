@@ -41,8 +41,8 @@ class AnnotatorWindow(QMainWindow):
             _ = upload_generated_image(
                 url=self.connection.build_url(),
                 generated_image=GeneratedImage(
-                    imageData=image2base64(image_path),
-                    datasetId=self.dataset.datasetId
+                    datasetId=self.dataset.datasetId,
+                    imageDataBase64=image2base64(image_path)
                 )
             )
         self.update()

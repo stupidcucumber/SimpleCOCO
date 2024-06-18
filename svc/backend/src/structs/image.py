@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 class Image(BaseModel):
     datasetId: int
-    imageData: str
+    imageDataBase64: str
 
 
 class GeneratedImage(Image):
@@ -16,3 +16,5 @@ class BackgroundImage(Image):
     
 class ForegroundImage(Image):
     foregroundId: int | None = None
+    classId: int
+    maskDataBase64: str

@@ -29,7 +29,7 @@ class AnnotationImageButton(QWidget):
             parent=self, 
             width=200,
             height=400, 
-            image=QImage.fromData(base64tobytes(self.generated_image.imageData))
+            image=QImage.fromData(base64tobytes(self.generated_image.imageDataBase64))
         )
         self.annotations_num = annotations_num
         self.slot = slot

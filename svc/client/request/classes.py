@@ -4,7 +4,7 @@ from ...backend.src.structs import Class
 
 def get_classes(url: str, dataset_id: int) -> list[Class]:
     response = requests.get(
-        url=url + '/extract/classes',
+        url=url + '/class/extract',
         params={
             'datasetId': dataset_id
         }
@@ -17,7 +17,7 @@ def get_classes(url: str, dataset_id: int) -> list[Class]:
     
 def post_class(url: str, class_: Class) -> Class:
     response = requests.post(
-        url=url + '/fill/class',
+        url=url + '/class/insert',
         json=class_.model_dump()
     )
     response.raise_for_status()
