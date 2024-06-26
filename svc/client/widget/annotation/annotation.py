@@ -1,7 +1,13 @@
+import numpy as np
 from PyQt6.QtCore import QObject, QRect
-from PyQt6.QtGui import QColor
+from PyQt6.QtGui import (
+    QColor,
+    QPixmap,
+    QImage
+)
 from PyQt6.QtWidgets import (
-    QWidget
+    QLabel,
+    QFrame
 )
 from ....backend.src.structs import (
     Annotation
@@ -16,16 +22,15 @@ def color_from_annotation(annotation: Annotation) -> QColor:
     return QColor.fromRgb(*channels)
 
 
-class AnnotationWidget(QWidget):
+class AnnotationWidget(QLabel):
     def __init__(self, annotation: Annotation, image_width: int, image_height: int,
                  parent: QObject | None = None) -> None:
         super(AnnotationWidget, self).__init__(parent)
         self.annotation = annotation
         self.image_width = image_width
         self.image_height = image_height
-        self.setGeometry(self._calculate_geometry())
         self._setup_layout()
-        
+
     def _calculate_geometry(self) -> QRect:
         width = int(self.image_width * self.annotation.wNorm)
         height = int(self.image_height * self.annotation.hNorm)
@@ -38,6 +43,19 @@ class AnnotationWidget(QWidget):
             width, height
         )
         
+    def _create_transparent_pixmap(self, width: int, height: int) -> QPixmap:
+        transparent_image = np.zeros((height, width, 4), dtype=np.uint8)
+        image = QImage.fromData(transparent_image.tobytes())
+        return QPixmap(image)
+
     def _setup_layout(self) -> None:
-        color_hex = color_from_annotation(annotation=self.annotation).name()
-        self.setStyleSheet('border: 2px solid %s;' % color_hex)
+        self.setFrameStyle(QFrame.Shape.Panel)
+        self.setLineWidth(2)
+        geometry = self._calculate_geometry()
+        self.setPixmap(
+            self._create_transparent_pixmap(
+                width=geometry.width(),
+                height=geometry.height()
+            )
+        )
+        self.setGeometry(geometry)
