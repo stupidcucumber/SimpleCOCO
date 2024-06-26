@@ -1,40 +1,62 @@
+from __future__ import annotations
+from typing import Callable
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
+from ...backend.src.structs import (
+    Annotation
+)
+from ..request.annotation import (
+    update_annotation,
+    delete_annotation
+)
+from ..utils import Connection
 
 
-class BoundingBox(QGraphicsRectItem):
-    def __init__(self):
-        super().__init__()
+class AnnotationBox(QGraphicsRectItem):
+    def __init__(self, annotation: Annotation, color: QColor, 
+                 geometry: QRect, slot: Callable[[AnnotationBox], None], 
+                 parent: QObject | None = None) -> None:
+        super(AnnotationBox, self).__init__(parent)
+        self.annotation = annotation
+        self.color = color
+        self.slot = slot
         self.__resizeEnabled = False
         self.__resize_square_f = False
         self.__line_width = 3
-
         self.__default_width = 200.0
         self.__default_height = 200.0
-
         self.__min_width = 30
         self.__min_height = 30
-
         self.__cursor = QCursor()
-
         self.__initPosition()
         self.__initUi()
+        self.setGeometry(geometry)
+        
+    def geometry(self) -> QRectF:
+        x = int(self.x())
+        y = int(self.y())
+        width = int(self.rect().width())
+        height = int(self.rect().height())
+        return QRect(x, y, width, height)
+        
+    def setGeometry(self, rect: QRect) -> None:
+        self.setX(rect.x())
+        self.setY(rect.y())
+        self.setWidth(rect.width())
+        self.setHeight(rect.height())
 
     def __initUi(self):
         self.setAcceptHoverEvents(True)
         self.setFlags(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable | QGraphicsItem.GraphicsItemFlag.ItemIsFocusable)
         self.__setStyleOfBoundingBox()
 
-    # init the edge direction for set correct reshape cursor based on it
     def __initPosition(self):
         self.__top = False
         self.__bottom = False
         self.__left = False
         self.__right = False
-
-    # TODO need more refactoring
-    # This is for preventing setting the width and height smaller than minimum size of each
+        
     def __isAbleToSetTop(self, rect, y):
         return rect.bottom() - y > self.__min_height
     def __isAbleToSetBottom(self, y):
@@ -45,7 +67,7 @@ class BoundingBox(QGraphicsRectItem):
         return x > self.__min_width
 
     def __setStyleOfBoundingBox(self):
-        pen = QPen()
+        pen = QPen(self.color)
         pen.setWidth(self.__line_width)
         self.setRect(QRectF(0.0, 0.0, self.__default_width, self.__default_height))
         self.setPen(pen)
@@ -160,16 +182,20 @@ class BoundingBox(QGraphicsRectItem):
         return super().hoverMoveEvent(e)
 
     # moving with arrow keys
-    def keyPressEvent(self, e):
+    def keyPressEvent(self, e) -> None:
         tr = self.transform()
-        if e.key() == Qt.Key.Key_Up:
-            tr.translate(0, -1)
-        if e.key() == Qt.Key.Key_Down:
-            tr.translate(0, 1)
-        if e.key() == Qt.Key.Key_Left:
-            tr.translate(-1, 0)
-        if e.key() == Qt.Key.Key_Right:
-            tr.translate(1, 0)
+        if e.key() == 16777219:
+            self.slot(self)
+            return
+        else:
+            if e.key() == Qt.Key.Key_Up:
+                tr.translate(0, -1)
+            if e.key() == Qt.Key.Key_Down:
+                tr.translate(0, 1)
+            if e.key() == Qt.Key.Key_Left:
+                tr.translate(-1, 0)
+            if e.key() == Qt.Key.Key_Right:
+                tr.translate(1, 0)
         self.setTransform(tr)
         return super().keyPressEvent(e)
 
